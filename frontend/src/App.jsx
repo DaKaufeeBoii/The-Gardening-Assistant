@@ -7,9 +7,11 @@ import PlantCatalogModal from './components/PlantCatalogModal';
 import { DEFAULT_INITIAL_PLAN, FALLBACK_PLANTS } from './data/fallbackData';
 import { Sparkles, Sprout, ShieldCheck, Footprints, AlertCircle, Headphones, Search } from 'lucide-react';
 
-const API_BASE = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '5173')
-  ? 'http://127.0.0.1:8000'
-  : '';
+const API_BASE = import.meta.env.VITE_API_BASE || import.meta.env.VITE_API_URL || (
+  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '5173')
+    ? 'http://127.0.0.1:8000'
+    : ''
+);
 
 const PRESET_PLANS = [
   {
