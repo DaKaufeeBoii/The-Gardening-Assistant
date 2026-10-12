@@ -20,10 +20,11 @@ venv/
 .venv/
 ENV/
 
-# Environment Variables
+# Environment Variables & Secrets
 .env
 .env.*
 !.env.example
+keys.txt
 
 # IDE & OS
 .vscode/

@@ -1,5 +1,19 @@
 import os
+from pathlib import Path
 import httpx
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+env_paths = [
+    Path(__file__).resolve().parent.parent / ".env",
+    Path(__file__).resolve().parent.parent.parent / ".env",
+    Path(".env")
+]
+for p in env_paths:
+    if p.exists():
+        load_dotenv(dotenv_path=p)
+        break
+
 from fastapi import FastAPI, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional, List, Dict, Any
