@@ -17,6 +17,18 @@
 
 ---
 
+## 📸 Demo Preview
+
+| Garden Profile & Presets | Personalized Plan & Outdoor Habits |
+| :---: | :---: |
+| ![Garden Profile](docs/screenshots/home.png) | ![Personalized Plan](docs/screenshots/plan.png) |
+
+| Curated Botanical Dataset (Grounding Knowledge Base) |
+| :---: |
+| ![Botanical Dataset](docs/screenshots/catalog.png) |
+
+---
+
 ## 🎯 Challenge Alignment & Partner Category
 
 ### 1. Hacktoberfest “Touch Grass”
