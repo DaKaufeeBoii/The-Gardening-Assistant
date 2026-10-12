@@ -1,7 +1,10 @@
-import React from 'react';
-import { Droplet, Sun, Clock, Compass, Users, Sparkles, Footprints } from 'lucide-react';
+import React, { useState } from 'react';
+import { Droplet, Sun, Clock, Compass, Users, Footprints, Volume2, Square } from 'lucide-react';
+import { playOutdoorNarration, stopOutdoorNarration } from '../utils/audioNarration';
 
-export default function PlantCard({ plant }) {
+export default function PlantCard({ plant, apiBase = '' }) {
+  const [voiceState, setVoiceState] = useState({ isPlaying: false, engine: null });
+
   const getCategoryClass = (cat) => {
     switch (cat?.toLowerCase()) {
       case 'herb': return 'tag-herb';
@@ -21,6 +24,15 @@ export default function PlantCard({ plant }) {
     }
   };
 
+  const handleToggleAudio = () => {
+    if (voiceState.isPlaying) {
+      stopOutdoorNarration(setVoiceState);
+    } else {
+      const speechText = `${plant.name}. ${plant.touch_grass_tip || ''}. Watering schedule: water every ${plant.watering_frequency_days || 3} days. ${plant.watering_guidance || ''}`;
+      playOutdoorNarration(speechText, apiBase, setVoiceState);
+    }
+  };
+
   return (
     <div className="plant-card" id={`plant-card-${plant.id}`}>
       <div className="plant-card-header">
@@ -30,10 +42,43 @@ export default function PlantCard({ plant }) {
             <div className="plant-card-scientific">{plant.scientific_name}</div>
           )}
         </div>
-        <span className={`plant-tag ${getCategoryClass(plant.category)}`}>
-          {plant.category}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <button
+            type="button"
+            className="btn-icon"
+            onClick={handleToggleAudio}
+            title={voiceState.isPlaying ? "Stop audio narration" : "Listen to plant care and outdoor habits (Hands-free ElevenLabs voice)"}
+            style={{
+              background: voiceState.isPlaying ? 'var(--color-forest-pale)' : '#f4f7f4',
+              color: voiceState.isPlaying ? 'var(--color-forest-dark)' : 'var(--text-secondary)',
+              padding: '6px',
+              borderRadius: '8px'
+            }}
+          >
+            {voiceState.isPlaying ? <Square size={16} fill="currentColor" /> : <Volume2 size={16} />}
+          </button>
+          <span className={`plant-tag ${getCategoryClass(plant.category)}`}>
+            {plant.category}
+          </span>
+        </div>
       </div>
+
+      {voiceState.isPlaying && (
+        <div style={{
+          fontSize: '0.72rem',
+          background: '#ecfdf5',
+          border: '1px solid #a7f3d0',
+          color: '#065f46',
+          padding: '3px 8px',
+          borderRadius: '6px',
+          marginBottom: '8px',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 5
+        }}>
+          <span>🔊 {voiceState.engine === 'elevenlabs' ? 'ElevenLabs AI Voice' : 'Outdoor Audio Guide'} playing...</span>
+        </div>
+      )}
 
       <div className="plant-badges-row">
         <span className="badge-item">

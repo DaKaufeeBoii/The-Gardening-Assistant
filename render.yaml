@@ -1,0 +1,32 @@
+services:
+  # Backend API Web Service on Render
+  - type: web
+    name: tga-backend
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    rootDir: backend
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: SERPAPI_API_KEY
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+
+  # Frontend Static Site on Render
+  - type: static
+    name: tga-frontend
+    region: oregon
+    plan: free
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: "dist"
+    rootDir: frontend
+    routes:
+      - type: rewrite
+        source: "/*"
+        destination: "/index.html"

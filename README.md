@@ -38,10 +38,28 @@ Modern software engineering can trap developers at their desks for days. TGA dir
 - Milestone status meters elevate you from *Seedling Starter* to *Master Green Thumb*.
 
 ### 2. Best Use of Gemma (Open-Weight AI)
-TGA leverages Google's **Gemma** open-weight model through local Ollama inference (`gemma2:2b` / `gemma:2b`):
+TGA leverages Google's **Gemma** open-weight model through local Ollama inference (`gemma2:9b` / `gemma:2b`):
 - **Local Sovereignty & Privacy:** Personal garden layout and household habits never leave your local machine.
 - **Botanical Grounding:** Prompts inject curated, verified plant biology facts so Gemma personalizes advice without hallucinating care schedules or watering needs.
 - **Deterministic Reliability:** If Ollama is offline or uninstalled, TGA falls back to an expert botanical scoring engine without degrading user experience.
+
+### 3. Best Use of ElevenLabs (Hands-Free Outdoor Voice)
+When hands are covered in moist soil and dirt outside, tapping a phone screen is messy:
+- **Audio Guides:** Every plant card and weekly checklist item features a dedicated narration trigger.
+- **Calm Outdoor Persona:** Calls ElevenLabs Text-to-Speech API (`/api/voice/narrate`) with calm pacing.
+- **Zero-Dependency Fallback:** Automatically falls back to the browser's Web Speech API if unconfigured.
+
+### 4. Best Use of SerpApi (Real-Time Frost & Climate Advisory)
+Generic planting calendars fail because microclimates differ:
+- **Live Search Engine:** Queries Google via SerpApi for average first and last frost dates for the user's specific city or region.
+- **Agricultural Safeguard:** Injects real-time frost dates directly into the planning flow.
+
+### 5. Best Use of Sentry Agent Tracing
+- **AI Observability:** Integrates `sentry-sdk` in the FastAPI backend to trace Gemma token usage, inference latency, and fallback events.
+
+### 6. Best Use of Render & Vercel
+- **Render (`render.yaml`):** 1-click infrastructure blueprint for backend service and frontend static site.
+- **Vercel (`vercel.json`):** Full-stack serverless deployment with edge CDN.
 
 ---
 

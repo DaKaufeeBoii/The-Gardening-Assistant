@@ -5,7 +5,7 @@ import PlantCard from './components/PlantCard';
 import WeeklyChecklist from './components/WeeklyChecklist';
 import PlantCatalogModal from './components/PlantCatalogModal';
 import { DEFAULT_INITIAL_PLAN, FALLBACK_PLANTS } from './data/fallbackData';
-import { Sparkles, Sprout, ShieldCheck, Footprints, AlertCircle } from 'lucide-react';
+import { Sparkles, Sprout, ShieldCheck, Footprints, AlertCircle, Headphones, Search } from 'lucide-react';
 
 const API_BASE = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '5173')
   ? 'http://127.0.0.1:8000'
@@ -54,7 +54,6 @@ const PRESET_PLANS = [
 ];
 
 export default function App() {
-  // Load initial states from localStorage if available
   const [profile, setProfile] = useState(() => {
     try {
       const saved = localStorage.getItem('tga_profile');
@@ -88,6 +87,7 @@ export default function App() {
   const [ollamaStatus, setOllamaStatus] = useState(null);
   const [catalogOpen, setCatalogOpen] = useState(false);
   const [allPlants, setAllPlants] = useState(FALLBACK_PLANTS);
+  const [climateAdvisory, setClimateAdvisory] = useState(null);
 
   // Sync state to localStorage
   useEffect(() => {
@@ -138,6 +138,28 @@ export default function App() {
     fetchHealthAndPlants();
   }, []);
 
+  // Fetch real-time / verified frost & climate advisory (SerpApi)
+  useEffect(() => {
+    let active = true;
+    const fetchClimate = async () => {
+      if (!profile.location_or_climate) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/climate/live?location=${encodeURIComponent(profile.location_or_climate)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (active) setClimateAdvisory(data);
+        }
+      } catch (err) {
+        console.warn('Climate live lookup failed:', err);
+      }
+    };
+    const debounceTimer = setTimeout(fetchClimate, 300);
+    return () => {
+      active = false;
+      clearTimeout(debounceTimer);
+    };
+  }, [profile.location_or_climate]);
+
   const handleGeneratePlan = async (customProfile = null) => {
     const targetProfile = customProfile || profile;
     setLoading(true);
@@ -159,7 +181,6 @@ export default function App() {
 
       const planData = await res.json();
       setPlan(planData);
-      // Reset checklist for new plan
       setCheckedTasks({});
     } catch (err) {
       console.warn('Error fetching plan from API, maintaining current plan with notification:', err);
@@ -203,9 +224,28 @@ export default function App() {
           The screen should be the <span>shortest part</span> of gardening.
         </h2>
         <p className="hero-subtitle">
-          Input your light, space, and region. Get 3 factual, grounded plant recommendations
-          and an actionable 4-week outdoor task schedule to unplug and touch real soil.
+          Input your light, space, and region. Get 3 factual, grounded plant recommendations,
+          an actionable 4-week outdoor task schedule, and hands-free voice guides to unplug and touch real soil.
         </p>
+
+        {/* Partner Categories Badge Row */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
+          <span className="chip" style={{ background: '#dcfce7', color: '#166534', fontWeight: 600 }}>
+            🌱 Best Use of Gemma
+          </span>
+          <span className="chip" style={{ background: '#fef3c7', color: '#92400e', fontWeight: 600 }}>
+            🎙️ Best Use of ElevenLabs
+          </span>
+          <span className="chip" style={{ background: '#e0f2fe', color: '#075985', fontWeight: 600 }}>
+            🔍 Best Use of SerpApi
+          </span>
+          <span className="chip" style={{ background: '#f3e8ff', color: '#6b21a8', fontWeight: 600 }}>
+            📊 Best Use of Sentry
+          </span>
+          <span className="chip" style={{ background: '#f5f5f5', color: '#333333', fontWeight: 600 }}>
+            🚀 Deployable on Vercel & Render
+          </span>
+        </div>
 
         {/* 1-Click Quick Presets */}
         <div className="presets-card">
@@ -259,6 +299,7 @@ export default function App() {
             loading={loading}
             enginePreference={enginePreference}
             onEngineChange={setEnginePreference}
+            climateAdvisory={climateAdvisory}
           />
         </aside>
 
@@ -303,13 +344,13 @@ export default function App() {
                 Recommended Plants ({plan.recommendations?.length || 0})
               </h3>
               <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                Factual Care & Sensory Habits
+                Factual Care & Hands-Free Audio
               </span>
             </div>
 
             <div className="plants-grid">
               {(plan.recommendations || []).map((plant) => (
-                <PlantCard key={plant.id} plant={plant} />
+                <PlantCard key={plant.id} plant={plant} apiBase={API_BASE} />
               ))}
             </div>
           </div>
@@ -320,6 +361,7 @@ export default function App() {
             checkedTasks={checkedTasks}
             onToggleTask={handleToggleTask}
             onResetChecklist={handleResetChecklist}
+            apiBase={API_BASE}
           />
         </section>
       </main>
@@ -337,8 +379,8 @@ export default function App() {
           “The ultimate goal of gardening technology is to send you outside into the dirt.”
         </div>
         <p>
-          The Gardening Assistant (TGA) • Hacktoberfest Touch Grass Challenge & Best Use of Gemma.
-          Built with React, Vite, FastAPI, and Open-Weight AI.
+          The Gardening Assistant (TGA) • Hacktoberfest Touch Grass Challenge.
+          Featuring Best Use of Gemma, ElevenLabs, SerpApi, and Sentry.
         </p>
       </footer>
     </div>

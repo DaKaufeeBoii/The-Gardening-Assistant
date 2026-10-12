@@ -17,7 +17,7 @@ const PREFERENCE_OPTIONS = [
   { id: 'foliage', label: 'Green Foliage', icon: '🪴' }
 ];
 
-export default function GardenForm({ profile, onChange, onSubmit, loading, enginePreference, onEngineChange }) {
+export default function GardenForm({ profile, onChange, onSubmit, loading, enginePreference, onEngineChange, climateAdvisory }) {
   const handlePreferenceToggle = (catId) => {
     const current = profile.preferences || [];
     if (current.includes(catId)) {
@@ -66,6 +66,26 @@ export default function GardenForm({ profile, onChange, onSubmit, loading, engin
               </button>
             ))}
           </div>
+
+          {climateAdvisory && (
+            <div style={{
+              marginTop: '10px',
+              background: '#eff6ff',
+              border: '1px solid #bfdbfe',
+              borderRadius: '10px',
+              padding: '8px 12px',
+              fontSize: '0.78rem',
+              color: '#1e40af'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, marginBottom: 2 }}>
+                <span>❄️ Local Frost & Planting Advisory</span>
+                <span style={{ fontSize: '0.68rem', color: '#2563eb', fontWeight: 600 }}>
+                  ({climateAdvisory.source})
+                </span>
+              </div>
+              <p style={{ margin: 0, lineHeight: 1.4 }}>{climateAdvisory.frost_advisory}</p>
+            </div>
+          )}
         </div>
 
         {/* Garden Type */}
