@@ -1,0 +1,12 @@
+node_modules
+__pycache__
+*.pyc
+.git
+.github
+.env
+.env.*
+keys.txt
+frontend/node_modules
+frontend/dist
+.vscode
+.idea
